@@ -1,0 +1,19 @@
+[package]
+name = "nkv_spec"
+version = "0.1.0"
+authors = ["Pavel Abramov <uncle.decart@gmail.com>"]
+edition = "2021"
+description = "Cap'n Proto generated files for nkv"
+license = "Apache-2.0"
+repository = "https://github.com/uncleDecart/nkv_spec"
+
+include = ["Cargo.toml", "lib.rs", "spec_capnp.rs"]
+
+readme = "README.md"
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+capnp = "0.20.3"
+capnpc = "0.20.0"
