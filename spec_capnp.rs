@@ -542,6 +542,8 @@ pub mod put_message {
 }
 
 pub mod server_request {
+  pub use self::Which::{Put,Get,Delete,Subscribe,Unsubscribe};
+
   #[derive(Copy, Clone)]
   pub struct Owned(());
   impl ::capnp::introspect::Introspect for Owned { fn introspect() -> ::capnp::introspect::Type { ::capnp::introspect::TypeVariant::Struct(::capnp::introspect::RawBrandedStructSchema { generic: &_private::RAW_SCHEMA, field_types: _private::get_field_types, annotation_types: _private::get_annotation_types }).into() } }
@@ -603,50 +605,66 @@ pub mod server_request {
       self.reader.total_size()
     }
     #[inline]
-    pub fn get_put(self) -> ::capnp::Result<crate::spec_capnp::put_message::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn has_put(&self) -> bool {
+      if self.reader.get_data_field::<u16>(0) != 0 { return false; }
       !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
-    pub fn get_get(self) -> ::capnp::Result<crate::spec_capnp::base_message::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(1), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn has_get(&self) -> bool {
-      !self.reader.get_pointer_field(1).is_null()
-    }
-    #[inline]
-    pub fn get_delete(self) -> ::capnp::Result<crate::spec_capnp::base_message::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(2), ::core::option::Option::None)
+      if self.reader.get_data_field::<u16>(0) != 1 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
     pub fn has_delete(&self) -> bool {
-      !self.reader.get_pointer_field(2).is_null()
-    }
-    #[inline]
-    pub fn get_subscribe(self) -> ::capnp::Result<crate::spec_capnp::base_message::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(3), ::core::option::Option::None)
+      if self.reader.get_data_field::<u16>(0) != 2 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
     pub fn has_subscribe(&self) -> bool {
-      !self.reader.get_pointer_field(3).is_null()
-    }
-    #[inline]
-    pub fn get_unsubscribe(self) -> ::capnp::Result<crate::spec_capnp::base_message::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(4), ::core::option::Option::None)
+      if self.reader.get_data_field::<u16>(0) != 3 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
     pub fn has_unsubscribe(&self) -> bool {
-      !self.reader.get_pointer_field(4).is_null()
+      if self.reader.get_data_field::<u16>(0) != 4 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
+    }
+    #[inline]
+    pub fn which(self) -> ::core::result::Result<WhichReader<'a,>, ::capnp::NotInSchema> {
+      match self.reader.get_data_field::<u16>(0) {
+        0 => {
+          ::core::result::Result::Ok(Put(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        1 => {
+          ::core::result::Result::Ok(Get(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        2 => {
+          ::core::result::Result::Ok(Delete(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        3 => {
+          ::core::result::Result::Ok(Subscribe(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        4 => {
+          ::core::result::Result::Ok(Unsubscribe(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        x => ::core::result::Result::Err(::capnp::NotInSchema(x))
+      }
     }
   }
 
   pub struct Builder<'a> { builder: ::capnp::private::layout::StructBuilder<'a> }
   impl <'a,> ::capnp::traits::HasStructSize for Builder<'a,>  {
-    const STRUCT_SIZE: ::capnp::private::layout::StructSize = ::capnp::private::layout::StructSize { data: 0, pointers: 5 };
+    const STRUCT_SIZE: ::capnp::private::layout::StructSize = ::capnp::private::layout::StructSize { data: 1, pointers: 1 };
   }
   impl <'a,> ::capnp::traits::HasTypeId for Builder<'a,>  {
     const TYPE_ID: u64 = _private::TYPE_ID;
@@ -697,84 +715,110 @@ pub mod server_request {
       self.builder.as_reader().total_size()
     }
     #[inline]
-    pub fn get_put(self) -> ::capnp::Result<crate::spec_capnp::put_message::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn set_put(&mut self, value: crate::spec_capnp::put_message::Reader<'_>) -> ::capnp::Result<()> {
+      self.builder.set_data_field::<u16>(0, 0);
       ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_put(self, ) -> crate::spec_capnp::put_message::Builder<'a> {
+      self.builder.set_data_field::<u16>(0, 0);
       ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_put(&self) -> bool {
+      if self.builder.get_data_field::<u16>(0) != 0 { return false; }
       !self.builder.is_pointer_field_null(0)
     }
     #[inline]
-    pub fn get_get(self) -> ::capnp::Result<crate::spec_capnp::base_message::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(1), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn set_get(&mut self, value: crate::spec_capnp::base_message::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(1), value, false)
+      self.builder.set_data_field::<u16>(0, 1);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_get(self, ) -> crate::spec_capnp::base_message::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(1), 0)
+      self.builder.set_data_field::<u16>(0, 1);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_get(&self) -> bool {
-      !self.builder.is_pointer_field_null(1)
-    }
-    #[inline]
-    pub fn get_delete(self) -> ::capnp::Result<crate::spec_capnp::base_message::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(2), ::core::option::Option::None)
+      if self.builder.get_data_field::<u16>(0) != 1 { return false; }
+      !self.builder.is_pointer_field_null(0)
     }
     #[inline]
     pub fn set_delete(&mut self, value: crate::spec_capnp::base_message::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(2), value, false)
+      self.builder.set_data_field::<u16>(0, 2);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_delete(self, ) -> crate::spec_capnp::base_message::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(2), 0)
+      self.builder.set_data_field::<u16>(0, 2);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_delete(&self) -> bool {
-      !self.builder.is_pointer_field_null(2)
-    }
-    #[inline]
-    pub fn get_subscribe(self) -> ::capnp::Result<crate::spec_capnp::base_message::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(3), ::core::option::Option::None)
+      if self.builder.get_data_field::<u16>(0) != 2 { return false; }
+      !self.builder.is_pointer_field_null(0)
     }
     #[inline]
     pub fn set_subscribe(&mut self, value: crate::spec_capnp::base_message::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(3), value, false)
+      self.builder.set_data_field::<u16>(0, 3);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_subscribe(self, ) -> crate::spec_capnp::base_message::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(3), 0)
+      self.builder.set_data_field::<u16>(0, 3);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_subscribe(&self) -> bool {
-      !self.builder.is_pointer_field_null(3)
-    }
-    #[inline]
-    pub fn get_unsubscribe(self) -> ::capnp::Result<crate::spec_capnp::base_message::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(4), ::core::option::Option::None)
+      if self.builder.get_data_field::<u16>(0) != 3 { return false; }
+      !self.builder.is_pointer_field_null(0)
     }
     #[inline]
     pub fn set_unsubscribe(&mut self, value: crate::spec_capnp::base_message::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(4), value, false)
+      self.builder.set_data_field::<u16>(0, 4);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_unsubscribe(self, ) -> crate::spec_capnp::base_message::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(4), 0)
+      self.builder.set_data_field::<u16>(0, 4);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_unsubscribe(&self) -> bool {
-      !self.builder.is_pointer_field_null(4)
+      if self.builder.get_data_field::<u16>(0) != 4 { return false; }
+      !self.builder.is_pointer_field_null(0)
+    }
+    #[inline]
+    pub fn which(self) -> ::core::result::Result<WhichBuilder<'a,>, ::capnp::NotInSchema> {
+      match self.builder.get_data_field::<u16>(0) {
+        0 => {
+          ::core::result::Result::Ok(Put(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        1 => {
+          ::core::result::Result::Ok(Get(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        2 => {
+          ::core::result::Result::Ok(Delete(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        3 => {
+          ::core::result::Result::Ok(Subscribe(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        4 => {
+          ::core::result::Result::Ok(Unsubscribe(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        x => ::core::result::Result::Err(::capnp::NotInSchema(x))
+      }
     }
   }
 
@@ -785,29 +829,14 @@ pub mod server_request {
     }
   }
   impl Pipeline  {
-    pub fn get_put(&self) -> crate::spec_capnp::put_message::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(0))
-    }
-    pub fn get_get(&self) -> crate::spec_capnp::base_message::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(1))
-    }
-    pub fn get_delete(&self) -> crate::spec_capnp::base_message::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(2))
-    }
-    pub fn get_subscribe(&self) -> crate::spec_capnp::base_message::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(3))
-    }
-    pub fn get_unsubscribe(&self) -> crate::spec_capnp::base_message::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(4))
-    }
   }
   mod _private {
     pub static ENCODED_NODE: [::capnp::Word; 96] = [
       ::capnp::word(0, 0, 0, 0, 5, 0, 6, 0),
       ::capnp::word(48, 6, 136, 101, 214, 9, 137, 213),
-      ::capnp::word(20, 0, 0, 0, 1, 0, 0, 0),
+      ::capnp::word(20, 0, 0, 0, 1, 0, 1, 0),
       ::capnp::word(190, 8, 91, 15, 118, 94, 5, 173),
-      ::capnp::word(5, 0, 7, 0, 0, 0, 0, 0),
+      ::capnp::word(1, 0, 7, 0, 0, 0, 5, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(21, 0, 0, 0, 18, 1, 0, 0),
       ::capnp::word(37, 0, 0, 0, 7, 0, 0, 0),
@@ -822,35 +851,35 @@ pub mod server_request {
       ::capnp::word(116, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 1, 0, 1, 0),
       ::capnp::word(20, 0, 0, 0, 3, 0, 4, 0),
-      ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
+      ::capnp::word(0, 0, 255, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 0, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(125, 0, 0, 0, 34, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(120, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(132, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(1, 0, 0, 0, 1, 0, 0, 0),
+      ::capnp::word(1, 0, 254, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 1, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(129, 0, 0, 0, 34, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(124, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(136, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(2, 0, 0, 0, 2, 0, 0, 0),
+      ::capnp::word(2, 0, 253, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 2, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(133, 0, 0, 0, 58, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(128, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(140, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(3, 0, 0, 0, 3, 0, 0, 0),
+      ::capnp::word(3, 0, 252, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 3, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(137, 0, 0, 0, 82, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(136, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(148, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(4, 0, 0, 0, 4, 0, 0, 0),
+      ::capnp::word(4, 0, 251, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 4, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(145, 0, 0, 0, 98, 0, 0, 0),
@@ -919,11 +948,20 @@ pub mod server_request {
       members_by_discriminant: MEMBERS_BY_DISCRIMINANT,
       members_by_name: MEMBERS_BY_NAME,
     };
-    pub static NONUNION_MEMBERS : &[u16] = &[0,1,2,3,4];
-    pub static MEMBERS_BY_DISCRIMINANT : &[u16] = &[];
+    pub static NONUNION_MEMBERS : &[u16] = &[];
+    pub static MEMBERS_BY_DISCRIMINANT : &[u16] = &[0,1,2,3,4];
     pub static MEMBERS_BY_NAME : &[u16] = &[2,1,0,3,4];
     pub const TYPE_ID: u64 = 0xd589_09d6_6588_0630;
   }
+  pub enum Which<A0,A1,A2,A3,A4> {
+    Put(A0),
+    Get(A1),
+    Delete(A2),
+    Subscribe(A3),
+    Unsubscribe(A4),
+  }
+  pub type WhichReader<'a,> = Which<::capnp::Result<crate::spec_capnp::put_message::Reader<'a>>,::capnp::Result<crate::spec_capnp::base_message::Reader<'a>>,::capnp::Result<crate::spec_capnp::base_message::Reader<'a>>,::capnp::Result<crate::spec_capnp::base_message::Reader<'a>>,::capnp::Result<crate::spec_capnp::base_message::Reader<'a>>>;
+  pub type WhichBuilder<'a,> = Which<::capnp::Result<crate::spec_capnp::put_message::Builder<'a>>,::capnp::Result<crate::spec_capnp::base_message::Builder<'a>>,::capnp::Result<crate::spec_capnp::base_message::Builder<'a>>,::capnp::Result<crate::spec_capnp::base_message::Builder<'a>>,::capnp::Result<crate::spec_capnp::base_message::Builder<'a>>>;
 }
 
 pub mod base_resp {
@@ -1456,6 +1494,8 @@ pub mod data_resp {
 }
 
 pub mod server_response {
+  pub use self::Which::{Base,Get,Put,Sub};
+
   #[derive(Copy, Clone)]
   pub struct Owned(());
   impl ::capnp::introspect::Introspect for Owned { fn introspect() -> ::capnp::introspect::Type { ::capnp::introspect::TypeVariant::Struct(::capnp::introspect::RawBrandedStructSchema { generic: &_private::RAW_SCHEMA, field_types: _private::get_field_types, annotation_types: _private::get_annotation_types }).into() } }
@@ -1517,42 +1557,56 @@ pub mod server_response {
       self.reader.total_size()
     }
     #[inline]
-    pub fn get_base(self) -> ::capnp::Result<crate::spec_capnp::base_resp::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn has_base(&self) -> bool {
+      if self.reader.get_data_field::<u16>(0) != 0 { return false; }
       !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
-    pub fn get_get(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(1), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn has_get(&self) -> bool {
-      !self.reader.get_pointer_field(1).is_null()
-    }
-    #[inline]
-    pub fn get_put(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(2), ::core::option::Option::None)
+      if self.reader.get_data_field::<u16>(0) != 1 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
     pub fn has_put(&self) -> bool {
-      !self.reader.get_pointer_field(2).is_null()
-    }
-    #[inline]
-    pub fn get_sub(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>> {
-      ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(3), ::core::option::Option::None)
+      if self.reader.get_data_field::<u16>(0) != 2 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
     }
     #[inline]
     pub fn has_sub(&self) -> bool {
-      !self.reader.get_pointer_field(3).is_null()
+      if self.reader.get_data_field::<u16>(0) != 3 { return false; }
+      !self.reader.get_pointer_field(0).is_null()
+    }
+    #[inline]
+    pub fn which(self) -> ::core::result::Result<WhichReader<'a,>, ::capnp::NotInSchema> {
+      match self.reader.get_data_field::<u16>(0) {
+        0 => {
+          ::core::result::Result::Ok(Base(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        1 => {
+          ::core::result::Result::Ok(Get(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        2 => {
+          ::core::result::Result::Ok(Put(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        3 => {
+          ::core::result::Result::Ok(Sub(
+            ::capnp::traits::FromPointerReader::get_from_pointer(&self.reader.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        x => ::core::result::Result::Err(::capnp::NotInSchema(x))
+      }
     }
   }
 
   pub struct Builder<'a> { builder: ::capnp::private::layout::StructBuilder<'a> }
   impl <'a,> ::capnp::traits::HasStructSize for Builder<'a,>  {
-    const STRUCT_SIZE: ::capnp::private::layout::StructSize = ::capnp::private::layout::StructSize { data: 0, pointers: 4 };
+    const STRUCT_SIZE: ::capnp::private::layout::StructSize = ::capnp::private::layout::StructSize { data: 1, pointers: 1 };
   }
   impl <'a,> ::capnp::traits::HasTypeId for Builder<'a,>  {
     const TYPE_ID: u64 = _private::TYPE_ID;
@@ -1603,68 +1657,90 @@ pub mod server_response {
       self.builder.as_reader().total_size()
     }
     #[inline]
-    pub fn get_base(self) -> ::capnp::Result<crate::spec_capnp::base_resp::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn set_base(&mut self, value: crate::spec_capnp::base_resp::Reader<'_>) -> ::capnp::Result<()> {
+      self.builder.set_data_field::<u16>(0, 0);
       ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_base(self, ) -> crate::spec_capnp::base_resp::Builder<'a> {
+      self.builder.set_data_field::<u16>(0, 0);
       ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_base(&self) -> bool {
+      if self.builder.get_data_field::<u16>(0) != 0 { return false; }
       !self.builder.is_pointer_field_null(0)
     }
     #[inline]
-    pub fn get_get(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(1), ::core::option::Option::None)
-    }
-    #[inline]
     pub fn set_get(&mut self, value: crate::spec_capnp::data_resp::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(1), value, false)
+      self.builder.set_data_field::<u16>(0, 1);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_get(self, ) -> crate::spec_capnp::data_resp::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(1), 0)
+      self.builder.set_data_field::<u16>(0, 1);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_get(&self) -> bool {
-      !self.builder.is_pointer_field_null(1)
-    }
-    #[inline]
-    pub fn get_put(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(2), ::core::option::Option::None)
+      if self.builder.get_data_field::<u16>(0) != 1 { return false; }
+      !self.builder.is_pointer_field_null(0)
     }
     #[inline]
     pub fn set_put(&mut self, value: crate::spec_capnp::data_resp::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(2), value, false)
+      self.builder.set_data_field::<u16>(0, 2);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_put(self, ) -> crate::spec_capnp::data_resp::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(2), 0)
+      self.builder.set_data_field::<u16>(0, 2);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_put(&self) -> bool {
-      !self.builder.is_pointer_field_null(2)
-    }
-    #[inline]
-    pub fn get_sub(self) -> ::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>> {
-      ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(3), ::core::option::Option::None)
+      if self.builder.get_data_field::<u16>(0) != 2 { return false; }
+      !self.builder.is_pointer_field_null(0)
     }
     #[inline]
     pub fn set_sub(&mut self, value: crate::spec_capnp::data_resp::Reader<'_>) -> ::capnp::Result<()> {
-      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(3), value, false)
+      self.builder.set_data_field::<u16>(0, 3);
+      ::capnp::traits::SetterInput::set_pointer_builder(self.builder.reborrow().get_pointer_field(0), value, false)
     }
     #[inline]
     pub fn init_sub(self, ) -> crate::spec_capnp::data_resp::Builder<'a> {
-      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(3), 0)
+      self.builder.set_data_field::<u16>(0, 3);
+      ::capnp::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field(0), 0)
     }
     #[inline]
     pub fn has_sub(&self) -> bool {
-      !self.builder.is_pointer_field_null(3)
+      if self.builder.get_data_field::<u16>(0) != 3 { return false; }
+      !self.builder.is_pointer_field_null(0)
+    }
+    #[inline]
+    pub fn which(self) -> ::core::result::Result<WhichBuilder<'a,>, ::capnp::NotInSchema> {
+      match self.builder.get_data_field::<u16>(0) {
+        0 => {
+          ::core::result::Result::Ok(Base(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        1 => {
+          ::core::result::Result::Ok(Get(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        2 => {
+          ::core::result::Result::Ok(Put(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        3 => {
+          ::core::result::Result::Ok(Sub(
+            ::capnp::traits::FromPointerBuilder::get_from_pointer(self.builder.get_pointer_field(0), ::core::option::Option::None)
+          ))
+        }
+        x => ::core::result::Result::Err(::capnp::NotInSchema(x))
+      }
     }
   }
 
@@ -1675,26 +1751,14 @@ pub mod server_response {
     }
   }
   impl Pipeline  {
-    pub fn get_base(&self) -> crate::spec_capnp::base_resp::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(0))
-    }
-    pub fn get_get(&self) -> crate::spec_capnp::data_resp::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(1))
-    }
-    pub fn get_put(&self) -> crate::spec_capnp::data_resp::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(2))
-    }
-    pub fn get_sub(&self) -> crate::spec_capnp::data_resp::Pipeline {
-      ::capnp::capability::FromTypelessPipeline::new(self._typeless.get_pointer_field(3))
-    }
   }
   mod _private {
     pub static ENCODED_NODE: [::capnp::Word; 79] = [
       ::capnp::word(0, 0, 0, 0, 5, 0, 6, 0),
       ::capnp::word(47, 117, 121, 69, 96, 223, 42, 251),
-      ::capnp::word(20, 0, 0, 0, 1, 0, 0, 0),
+      ::capnp::word(20, 0, 0, 0, 1, 0, 1, 0),
       ::capnp::word(190, 8, 91, 15, 118, 94, 5, 173),
-      ::capnp::word(4, 0, 7, 0, 0, 0, 0, 0),
+      ::capnp::word(1, 0, 7, 0, 0, 0, 4, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(21, 0, 0, 0, 26, 1, 0, 0),
       ::capnp::word(37, 0, 0, 0, 7, 0, 0, 0),
@@ -1709,28 +1773,28 @@ pub mod server_response {
       ::capnp::word(115, 101, 0, 0, 0, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 1, 0, 1, 0),
       ::capnp::word(16, 0, 0, 0, 3, 0, 4, 0),
-      ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
+      ::capnp::word(0, 0, 255, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 0, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(97, 0, 0, 0, 42, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(92, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(104, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(1, 0, 0, 0, 1, 0, 0, 0),
+      ::capnp::word(1, 0, 254, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 1, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(101, 0, 0, 0, 34, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(96, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(108, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(2, 0, 0, 0, 2, 0, 0, 0),
+      ::capnp::word(2, 0, 253, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 2, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(105, 0, 0, 0, 34, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(100, 0, 0, 0, 3, 0, 1, 0),
       ::capnp::word(112, 0, 0, 0, 2, 0, 1, 0),
-      ::capnp::word(3, 0, 0, 0, 3, 0, 0, 0),
+      ::capnp::word(3, 0, 252, 255, 0, 0, 0, 0),
       ::capnp::word(0, 0, 1, 0, 3, 0, 0, 0),
       ::capnp::word(0, 0, 0, 0, 0, 0, 0, 0),
       ::capnp::word(109, 0, 0, 0, 34, 0, 0, 0),
@@ -1788,9 +1852,17 @@ pub mod server_response {
       members_by_discriminant: MEMBERS_BY_DISCRIMINANT,
       members_by_name: MEMBERS_BY_NAME,
     };
-    pub static NONUNION_MEMBERS : &[u16] = &[0,1,2,3];
-    pub static MEMBERS_BY_DISCRIMINANT : &[u16] = &[];
+    pub static NONUNION_MEMBERS : &[u16] = &[];
+    pub static MEMBERS_BY_DISCRIMINANT : &[u16] = &[0,1,2,3];
     pub static MEMBERS_BY_NAME : &[u16] = &[0,1,2,3];
     pub const TYPE_ID: u64 = 0xfb2a_df60_4579_752f;
   }
+  pub enum Which<A0,A1,A2,A3> {
+    Base(A0),
+    Get(A1),
+    Put(A2),
+    Sub(A3),
+  }
+  pub type WhichReader<'a,> = Which<::capnp::Result<crate::spec_capnp::base_resp::Reader<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Reader<'a>>>;
+  pub type WhichBuilder<'a,> = Which<::capnp::Result<crate::spec_capnp::base_resp::Builder<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>>,::capnp::Result<crate::spec_capnp::data_resp::Builder<'a>>>;
 }

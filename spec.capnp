@@ -2,6 +2,7 @@
 
 # This file contains common messages which are
 # used between NkvClient and Server in Cap'n Proto format.
+# for more info checkout github.com/uncleDecart/nkv
 
 using Go = import "/go.capnp";
 @0xad055e760f5b08be;
@@ -16,16 +17,17 @@ struct BaseMessage {
 
 struct PutMessage {
     base @0 :BaseMessage;
-    value @1 :Data;  # Box<[u8]> represented as a blob of data
+    value @1 :Data;
 }
 
-# Enums can be represented as a union with tagged fields in Cap'n Proto
 struct ServerRequest {
-    put @0 :PutMessage;
-    get @1 :BaseMessage;
-    delete @2 :BaseMessage;
-    subscribe @3 :BaseMessage;
-    unsubscribe @4 :BaseMessage;
+    union {
+        put @0 :PutMessage;
+        get @1 :BaseMessage;
+        delete @2 :BaseMessage;
+        subscribe @3 :BaseMessage;
+        unsubscribe @4 :BaseMessage;
+    }
 }
 
 struct BaseResp {
@@ -36,13 +38,15 @@ struct BaseResp {
 
 struct DataResp {
     base @0 :BaseResp;
-    data @1 :List(Data);  # Vec<Vec<u8>> as a list of binary blobs
+    data @1 :List(Data);
 }
 
 struct ServerResponse {
-    base @0 :BaseResp;
-    get @1 :DataResp;
-    put @2 :DataResp;
-    sub @3 :DataResp;
+    union {
+        base @0 :BaseResp;
+        get @1 :DataResp;
+        put @2 :DataResp;
+        sub @3 :DataResp;
+    }
 }
 

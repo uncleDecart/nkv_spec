@@ -6,6 +6,7 @@ import (
 	capnp "capnproto.org/go/capnp/v3"
 	text "capnproto.org/go/capnp/v3/encoding/text"
 	schemas "capnproto.org/go/capnp/v3/schemas"
+	strconv "strconv"
 )
 
 type BaseMessage capnp.Struct
@@ -231,17 +232,44 @@ func (p PutMessage_Future) Base() BaseMessage_Future {
 }
 
 type ServerRequest capnp.Struct
+type ServerRequest_Which uint16
+
+const (
+	ServerRequest_Which_put         ServerRequest_Which = 0
+	ServerRequest_Which_get         ServerRequest_Which = 1
+	ServerRequest_Which_delete      ServerRequest_Which = 2
+	ServerRequest_Which_subscribe   ServerRequest_Which = 3
+	ServerRequest_Which_unsubscribe ServerRequest_Which = 4
+)
+
+func (w ServerRequest_Which) String() string {
+	const s = "putgetdeletesubscribeunsubscribe"
+	switch w {
+	case ServerRequest_Which_put:
+		return s[0:3]
+	case ServerRequest_Which_get:
+		return s[3:6]
+	case ServerRequest_Which_delete:
+		return s[6:12]
+	case ServerRequest_Which_subscribe:
+		return s[12:21]
+	case ServerRequest_Which_unsubscribe:
+		return s[21:32]
+
+	}
+	return "ServerRequest_Which(" + strconv.FormatUint(uint64(w), 10) + ")"
+}
 
 // ServerRequest_TypeID is the unique identifier for the type ServerRequest.
 const ServerRequest_TypeID = 0xd58909d665880630
 
 func NewServerRequest(s *capnp.Segment) (ServerRequest, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 5})
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ServerRequest(st), err
 }
 
 func NewRootServerRequest(s *capnp.Segment) (ServerRequest, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 5})
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ServerRequest(st), err
 }
 
@@ -266,6 +294,10 @@ func (ServerRequest) DecodeFromPtr(p capnp.Ptr) ServerRequest {
 func (s ServerRequest) ToPtr() capnp.Ptr {
 	return capnp.Struct(s).ToPtr()
 }
+
+func (s ServerRequest) Which() ServerRequest_Which {
+	return ServerRequest_Which(capnp.Struct(s).Uint16(0))
+}
 func (s ServerRequest) IsValid() bool {
 	return capnp.Struct(s).IsValid()
 }
@@ -278,21 +310,29 @@ func (s ServerRequest) Segment() *capnp.Segment {
 	return capnp.Struct(s).Segment()
 }
 func (s ServerRequest) Put() (PutMessage, error) {
+	if capnp.Struct(s).Uint16(0) != 0 {
+		panic("Which() != put")
+	}
 	p, err := capnp.Struct(s).Ptr(0)
 	return PutMessage(p.Struct()), err
 }
 
 func (s ServerRequest) HasPut() bool {
+	if capnp.Struct(s).Uint16(0) != 0 {
+		return false
+	}
 	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerRequest) SetPut(v PutMessage) error {
+	capnp.Struct(s).SetUint16(0, 0)
 	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewPut sets the put field to a newly
 // allocated PutMessage struct, preferring placement in s's segment.
 func (s ServerRequest) NewPut() (PutMessage, error) {
+	capnp.Struct(s).SetUint16(0, 0)
 	ss, err := NewPutMessage(capnp.Struct(s).Segment())
 	if err != nil {
 		return PutMessage{}, err
@@ -302,98 +342,130 @@ func (s ServerRequest) NewPut() (PutMessage, error) {
 }
 
 func (s ServerRequest) Get() (BaseMessage, error) {
-	p, err := capnp.Struct(s).Ptr(1)
+	if capnp.Struct(s).Uint16(0) != 1 {
+		panic("Which() != get")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return BaseMessage(p.Struct()), err
 }
 
 func (s ServerRequest) HasGet() bool {
-	return capnp.Struct(s).HasPtr(1)
+	if capnp.Struct(s).Uint16(0) != 1 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerRequest) SetGet(v BaseMessage) error {
-	return capnp.Struct(s).SetPtr(1, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 1)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewGet sets the get field to a newly
 // allocated BaseMessage struct, preferring placement in s's segment.
 func (s ServerRequest) NewGet() (BaseMessage, error) {
+	capnp.Struct(s).SetUint16(0, 1)
 	ss, err := NewBaseMessage(capnp.Struct(s).Segment())
 	if err != nil {
 		return BaseMessage{}, err
 	}
-	err = capnp.Struct(s).SetPtr(1, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
 func (s ServerRequest) Delete() (BaseMessage, error) {
-	p, err := capnp.Struct(s).Ptr(2)
+	if capnp.Struct(s).Uint16(0) != 2 {
+		panic("Which() != delete")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return BaseMessage(p.Struct()), err
 }
 
 func (s ServerRequest) HasDelete() bool {
-	return capnp.Struct(s).HasPtr(2)
+	if capnp.Struct(s).Uint16(0) != 2 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerRequest) SetDelete(v BaseMessage) error {
-	return capnp.Struct(s).SetPtr(2, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 2)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewDelete sets the delete field to a newly
 // allocated BaseMessage struct, preferring placement in s's segment.
 func (s ServerRequest) NewDelete() (BaseMessage, error) {
+	capnp.Struct(s).SetUint16(0, 2)
 	ss, err := NewBaseMessage(capnp.Struct(s).Segment())
 	if err != nil {
 		return BaseMessage{}, err
 	}
-	err = capnp.Struct(s).SetPtr(2, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
 func (s ServerRequest) Subscribe() (BaseMessage, error) {
-	p, err := capnp.Struct(s).Ptr(3)
+	if capnp.Struct(s).Uint16(0) != 3 {
+		panic("Which() != subscribe")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return BaseMessage(p.Struct()), err
 }
 
 func (s ServerRequest) HasSubscribe() bool {
-	return capnp.Struct(s).HasPtr(3)
+	if capnp.Struct(s).Uint16(0) != 3 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerRequest) SetSubscribe(v BaseMessage) error {
-	return capnp.Struct(s).SetPtr(3, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 3)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewSubscribe sets the subscribe field to a newly
 // allocated BaseMessage struct, preferring placement in s's segment.
 func (s ServerRequest) NewSubscribe() (BaseMessage, error) {
+	capnp.Struct(s).SetUint16(0, 3)
 	ss, err := NewBaseMessage(capnp.Struct(s).Segment())
 	if err != nil {
 		return BaseMessage{}, err
 	}
-	err = capnp.Struct(s).SetPtr(3, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
 func (s ServerRequest) Unsubscribe() (BaseMessage, error) {
-	p, err := capnp.Struct(s).Ptr(4)
+	if capnp.Struct(s).Uint16(0) != 4 {
+		panic("Which() != unsubscribe")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return BaseMessage(p.Struct()), err
 }
 
 func (s ServerRequest) HasUnsubscribe() bool {
-	return capnp.Struct(s).HasPtr(4)
+	if capnp.Struct(s).Uint16(0) != 4 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerRequest) SetUnsubscribe(v BaseMessage) error {
-	return capnp.Struct(s).SetPtr(4, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 4)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewUnsubscribe sets the unsubscribe field to a newly
 // allocated BaseMessage struct, preferring placement in s's segment.
 func (s ServerRequest) NewUnsubscribe() (BaseMessage, error) {
+	capnp.Struct(s).SetUint16(0, 4)
 	ss, err := NewBaseMessage(capnp.Struct(s).Segment())
 	if err != nil {
 		return BaseMessage{}, err
 	}
-	err = capnp.Struct(s).SetPtr(4, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
@@ -402,7 +474,7 @@ type ServerRequest_List = capnp.StructList[ServerRequest]
 
 // NewServerRequest creates a new list of ServerRequest.
 func NewServerRequest_List(s *capnp.Segment, sz int32) (ServerRequest_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 5}, sz)
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
 	return capnp.StructList[ServerRequest](l), err
 }
 
@@ -417,16 +489,16 @@ func (p ServerRequest_Future) Put() PutMessage_Future {
 	return PutMessage_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerRequest_Future) Get() BaseMessage_Future {
-	return BaseMessage_Future{Future: p.Future.Field(1, nil)}
+	return BaseMessage_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerRequest_Future) Delete() BaseMessage_Future {
-	return BaseMessage_Future{Future: p.Future.Field(2, nil)}
+	return BaseMessage_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerRequest_Future) Subscribe() BaseMessage_Future {
-	return BaseMessage_Future{Future: p.Future.Field(3, nil)}
+	return BaseMessage_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerRequest_Future) Unsubscribe() BaseMessage_Future {
-	return BaseMessage_Future{Future: p.Future.Field(4, nil)}
+	return BaseMessage_Future{Future: p.Future.Field(0, nil)}
 }
 
 type BaseResp capnp.Struct
@@ -653,17 +725,41 @@ func (p DataResp_Future) Base() BaseResp_Future {
 }
 
 type ServerResponse capnp.Struct
+type ServerResponse_Which uint16
+
+const (
+	ServerResponse_Which_base ServerResponse_Which = 0
+	ServerResponse_Which_get  ServerResponse_Which = 1
+	ServerResponse_Which_put  ServerResponse_Which = 2
+	ServerResponse_Which_sub  ServerResponse_Which = 3
+)
+
+func (w ServerResponse_Which) String() string {
+	const s = "basegetputsub"
+	switch w {
+	case ServerResponse_Which_base:
+		return s[0:4]
+	case ServerResponse_Which_get:
+		return s[4:7]
+	case ServerResponse_Which_put:
+		return s[7:10]
+	case ServerResponse_Which_sub:
+		return s[10:13]
+
+	}
+	return "ServerResponse_Which(" + strconv.FormatUint(uint64(w), 10) + ")"
+}
 
 // ServerResponse_TypeID is the unique identifier for the type ServerResponse.
 const ServerResponse_TypeID = 0xfb2adf604579752f
 
 func NewServerResponse(s *capnp.Segment) (ServerResponse, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4})
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ServerResponse(st), err
 }
 
 func NewRootServerResponse(s *capnp.Segment) (ServerResponse, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4})
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ServerResponse(st), err
 }
 
@@ -688,6 +784,10 @@ func (ServerResponse) DecodeFromPtr(p capnp.Ptr) ServerResponse {
 func (s ServerResponse) ToPtr() capnp.Ptr {
 	return capnp.Struct(s).ToPtr()
 }
+
+func (s ServerResponse) Which() ServerResponse_Which {
+	return ServerResponse_Which(capnp.Struct(s).Uint16(0))
+}
 func (s ServerResponse) IsValid() bool {
 	return capnp.Struct(s).IsValid()
 }
@@ -700,21 +800,29 @@ func (s ServerResponse) Segment() *capnp.Segment {
 	return capnp.Struct(s).Segment()
 }
 func (s ServerResponse) Base() (BaseResp, error) {
+	if capnp.Struct(s).Uint16(0) != 0 {
+		panic("Which() != base")
+	}
 	p, err := capnp.Struct(s).Ptr(0)
 	return BaseResp(p.Struct()), err
 }
 
 func (s ServerResponse) HasBase() bool {
+	if capnp.Struct(s).Uint16(0) != 0 {
+		return false
+	}
 	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerResponse) SetBase(v BaseResp) error {
+	capnp.Struct(s).SetUint16(0, 0)
 	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewBase sets the base field to a newly
 // allocated BaseResp struct, preferring placement in s's segment.
 func (s ServerResponse) NewBase() (BaseResp, error) {
+	capnp.Struct(s).SetUint16(0, 0)
 	ss, err := NewBaseResp(capnp.Struct(s).Segment())
 	if err != nil {
 		return BaseResp{}, err
@@ -724,74 +832,98 @@ func (s ServerResponse) NewBase() (BaseResp, error) {
 }
 
 func (s ServerResponse) Get() (DataResp, error) {
-	p, err := capnp.Struct(s).Ptr(1)
+	if capnp.Struct(s).Uint16(0) != 1 {
+		panic("Which() != get")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return DataResp(p.Struct()), err
 }
 
 func (s ServerResponse) HasGet() bool {
-	return capnp.Struct(s).HasPtr(1)
+	if capnp.Struct(s).Uint16(0) != 1 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerResponse) SetGet(v DataResp) error {
-	return capnp.Struct(s).SetPtr(1, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 1)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewGet sets the get field to a newly
 // allocated DataResp struct, preferring placement in s's segment.
 func (s ServerResponse) NewGet() (DataResp, error) {
+	capnp.Struct(s).SetUint16(0, 1)
 	ss, err := NewDataResp(capnp.Struct(s).Segment())
 	if err != nil {
 		return DataResp{}, err
 	}
-	err = capnp.Struct(s).SetPtr(1, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
 func (s ServerResponse) Put() (DataResp, error) {
-	p, err := capnp.Struct(s).Ptr(2)
+	if capnp.Struct(s).Uint16(0) != 2 {
+		panic("Which() != put")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return DataResp(p.Struct()), err
 }
 
 func (s ServerResponse) HasPut() bool {
-	return capnp.Struct(s).HasPtr(2)
+	if capnp.Struct(s).Uint16(0) != 2 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerResponse) SetPut(v DataResp) error {
-	return capnp.Struct(s).SetPtr(2, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 2)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewPut sets the put field to a newly
 // allocated DataResp struct, preferring placement in s's segment.
 func (s ServerResponse) NewPut() (DataResp, error) {
+	capnp.Struct(s).SetUint16(0, 2)
 	ss, err := NewDataResp(capnp.Struct(s).Segment())
 	if err != nil {
 		return DataResp{}, err
 	}
-	err = capnp.Struct(s).SetPtr(2, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
 func (s ServerResponse) Sub() (DataResp, error) {
-	p, err := capnp.Struct(s).Ptr(3)
+	if capnp.Struct(s).Uint16(0) != 3 {
+		panic("Which() != sub")
+	}
+	p, err := capnp.Struct(s).Ptr(0)
 	return DataResp(p.Struct()), err
 }
 
 func (s ServerResponse) HasSub() bool {
-	return capnp.Struct(s).HasPtr(3)
+	if capnp.Struct(s).Uint16(0) != 3 {
+		return false
+	}
+	return capnp.Struct(s).HasPtr(0)
 }
 
 func (s ServerResponse) SetSub(v DataResp) error {
-	return capnp.Struct(s).SetPtr(3, capnp.Struct(v).ToPtr())
+	capnp.Struct(s).SetUint16(0, 3)
+	return capnp.Struct(s).SetPtr(0, capnp.Struct(v).ToPtr())
 }
 
 // NewSub sets the sub field to a newly
 // allocated DataResp struct, preferring placement in s's segment.
 func (s ServerResponse) NewSub() (DataResp, error) {
+	capnp.Struct(s).SetUint16(0, 3)
 	ss, err := NewDataResp(capnp.Struct(s).Segment())
 	if err != nil {
 		return DataResp{}, err
 	}
-	err = capnp.Struct(s).SetPtr(3, capnp.Struct(ss).ToPtr())
+	err = capnp.Struct(s).SetPtr(0, capnp.Struct(ss).ToPtr())
 	return ss, err
 }
 
@@ -800,7 +932,7 @@ type ServerResponse_List = capnp.StructList[ServerResponse]
 
 // NewServerResponse creates a new list of ServerResponse.
 func NewServerResponse_List(s *capnp.Segment, sz int32) (ServerResponse_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4}, sz)
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
 	return capnp.StructList[ServerResponse](l), err
 }
 
@@ -815,57 +947,58 @@ func (p ServerResponse_Future) Base() BaseResp_Future {
 	return BaseResp_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerResponse_Future) Get() DataResp_Future {
-	return DataResp_Future{Future: p.Future.Field(1, nil)}
+	return DataResp_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerResponse_Future) Put() DataResp_Future {
-	return DataResp_Future{Future: p.Future.Field(2, nil)}
+	return DataResp_Future{Future: p.Future.Field(0, nil)}
 }
 func (p ServerResponse_Future) Sub() DataResp_Future {
-	return DataResp_Future{Future: p.Future.Field(3, nil)}
+	return DataResp_Future{Future: p.Future.Field(0, nil)}
 }
 
-const schema_ad055e760f5b08be = "x\xda\x8cT_K\x14_\x18~\x9f\xf3\xce:\xfe@" +
-	"\x7f\xbb\xd3\xac7\xdeHR`\x82i\xd9M\xdeh\xa2" +
-	"P\xa0\xb4\xc7\x8a\xa2\xbf\xce\xee\x1etq\xdd\xb6\x9d\x99" +
-	"5!\xe9\x0fE\x0a\x09\x06u\xd7M\xd0M\x81\xf4\x05" +
-	"\xc2\xabn\xbd\xac;\xeb*$\xbf@\xa0\xd4\xc4\xd9]" +
-	"\xd7iw\x82n\x86\x97\xe7}\xe6\xbc\xcf\xfb\xccsf" +
-	"`\x03#\xc6\x89\xf6\x05&!{b-A_9\xed" +
-	"]\xdeZ\xdd$+\x89`\xa3\xf5Z\xbc|3\xb6N" +
-	"1a\x12\xd9\xaf\xb1c\xafCWo\xb1@\x08\x06Z" +
-	"\x96\xd5\xe7\xffV>5pc&\xd1`\x878\x04\xfb" +
-	"\xa8~m\xf0\xb0\xe8\x02!Po:\xce?\xdd\xdc\xfd" +
-	"\xd2\xc0fM9\xcd\x02\xf6\xb8.\xed3\xfc\x9e\x10|" +
-	"|\xb4V~\xb7\xf7a\x9bd\x12M:\xb6x\xc7\xfe" +
-	"^!\x7f\xab\x90\xfb\xfd\xc5\xf1\xe9\xaf\xbd{\x0d'\x1b" +
-	"\xfa\xe4%\xa3\x13\xf6\xaa.\xed\x15c\x9b\xf0\xe3ew" +
-	")\x93\xfb\xf9+b\xbd\x1b\xb1];\xa7\xc5\xdb*\xb6" +
-	"@}Aa\xae|\xcb-\xaa\x8c\xe8\xd7\xcf\xe3\x19\xa7" +
-	"X(\x0e\x8d9\x9e\x13\x9fRn1\x05\xc8V6\x88" +
-	"\x0c\x10Y\xc7z\x89\xe4\x11\x86\x1c\x10\xb0\x80$4\xd8" +
-	"\xa7\xc1\x1e\x86\x1c\x13\x88\xa7\x1dW!q\xb0\x18\x01\x09" +
-	"B<\xebx\x0e\xfe'\xa4\x18h'\xa1\xcb\xfa`\x0e" +
-	"\x0f\xbe\xa0JeU\x9aRw|\xe5\xc2\xd3\xd3\x93\xf5" +
-	"\xe9K\xddD\xf2.C>\x0eM\x7f\xa8\xc1{\x0c\xb9" +
-	",`\x09\x91\x84 \xb2\x9e\x0c\x11\xc9\x07\x0c\xf9L\xc0" +
-	"bN\x82\x89\xac\x95)\"\xb9\xcc\x90/\x04,\xc3H" +
-	"\xc2 \xb2\x9e\xa7\x89\xe4\x1aC\xbe\x120\x8b\xbe\x87\xc4" +
-	"\xbeuU\xe5\xe6\x8c\xf2\x908\xf8\xaaUt8\xab\xf2" +
-	"\xcaS\xcd\x8d\xc0\xf5\xd3n\xa6\x94K\x13\xa2\xba~\xa1" +
-	"\xda'3\x97\x8e\xeaGZ2\xea\xb8jR\xb9\xae3" +
-	"\xa3H\x1b\xd2V7d\xbc\x93H\x8e0\xe4D\xc8\x90" +
-	"s\xda\x901\x86L\x85\x0c\x99\xbcJ$'\x18\xf2\x8a" +
-	"\x00\xe7\xb2h#\x816\x829\xa7\x16\xf7\xeb \x93\xcf" +
-	"\xa9\x82w\xc9\xa7\x10!:\x1dZQ=\x1d\xd1r\xea" +
-	"j\x86\xc2jPS3J$\xcf2\xe4\xc5?\xd4\x0c" +
-	"\xbb\x9e\xe3\xf9.L\x120\x09\xf7\xe7\xabK7i\x89" +
-	"\x0c\x8c[\xbc]`WiE\x89\xba\"GG\xf3:" +
-	"C\xce\x86\x0cR\xda\xa0i\x86\xcc\x87\x0c\xcai0\xcb" +
-	"\x90\xc5Pb\xe658\xcb\x90\xde_\x93]\xcbG\xfd" +
-	"\x7fRC+IjB]?\xdd\x8cF[\x9c\xf2\xbd" +
-	"\xc9\xe1\xea\xfe\xffr\x05O\xd6\xae\xe0\xa9\x03\xa1\x0d\xd9" +
-	"\xea*;y_U._;\xe1w\x00\x00\x00\xff\xff" +
-	"\xcfK/\xa2"
+const schema_ad055e760f5b08be = "x\xda\x8cT\xcfO\x13]\x14\xbd\xe7\xbd)\xc3\x97\xb4" +
+	"_\xdbo\xca\x86\x0d\xf9\x88&H\x82\xa0\xb8\x91\x0dH" +
+	"h\xa2\x09\xc4>\xd4h\xfc\xc9\xb4}\x81\x86Rkg" +
+	"\xa6H\"\xf1G4B\"\x09&\xbasc\xe2F\x13" +
+	"\xe2?`X\xb9e\xa9;te\x88\xfc\x03& <" +
+	"\xf3:\xa5\x1d\xe9\x98\xb8in\xce=}\xf7\xbc\xf3\xce" +
+	"\x9d\x81u\x8c\x18'b\xf3\x9c\x98\xe8\x89\xb4\xa9\xbej" +
+	"\xd6\xbd\xbc\xb9\xb2A\xc9\x14\xd4z\xfb\xb5x\xf5fd" +
+	"\x8d\"\xcc$\xb2^c\xdbZ\x83\xae\xdeb\x9e\xa0\x06" +
+	"\xda\x96\xe4\xe7\x7f\x96?\x91H!@N\xc3\x8c\x10\x0d" +
+	"v\xb0\xff`\x1d\xd5\x7f\x1c\xfc\x9fu\x81\xa0\xe4\x9b\x8e" +
+	"\xf3O7v\xbe\x1c:\x9bk\xcai\xce`\xa5ui" +
+	"\x9d\xe1\xef\x09\xea\xe3\xa3\xd5\xea\xbb\xdd\x0f[\x87\x0e\xf7" +
+	"\x95l\xf2m\xeb{\x8d\xfc\xadF\xee\xf7\x16\xd2S_" +
+	"{w[\x95\x18D\x83\x8bF'\xac\x15C\xd3\x97\x8d" +
+	"-\xc2\x8f\x97\xdd\x95\\ao?\xe4\x8a7\";V" +
+	"!\xa2+\x19\x99\xa7>U\x9a\xad\xder\xca2\xc7\xfa" +
+	"\xf5\xef\xf1\x9c].\x95\x87\xc6l\xd7\x8eOJ\xa7\x9c" +
+	"\x01D;7\x88\x0c\x10%\x8f\xf5\x12\x89#\x1cb\x80" +
+	"!\x09\xa4\xa0\xc1>\x0d\xf6p\x881\x86x\xd6v$" +
+	"\x12\xcd\xab\x11\x90 \xc4\xf3\xb6k\xe3_B\x86\x031" +
+	"b\xbal\x0c\xe6\xc1\xc1\x17d\xa5*+\x93\xf2\x8e'" +
+	"\x1d\xb8zz\x8a\x1bQ\xa5j\xe3\x17\xbb\x89\xc4]\x0e" +
+	"\xf1\x98!\x86}\xe5\xcf\x7f\xa8\xd1{\x1cb\x89!\xc6" +
+	"\xf6T\x0a\x8c(\xf9d\x88H<\xe0\x10\xcf\x18b\xfc" +
+	"\xa7J\x81\x13%\x97'\x89\xc4\x12\x87x\xc1\x103v" +
+	"U\x0a\x06Q\xf2y\x96H\xacr\x88W\x0cf\xd9s" +
+	"\x918\xf0\xcf\x97oNK\x17\x89\xe6\xe3\xfa\xe8p^" +
+	"\x16\xa5+[\x1b\xca\xf1\xb2N\xaeR\xc8\x12\xc2\xba^" +
+	"\xc9\xef\x93Y\xc8\x86\xf5C}\x19\xb5\x1d9!\x1d\xc7" +
+	"\x9e\x96\xa4]\x896\xde$\xddI$F8\xc4x\xe0" +
+	"M\xceiO\xc68D\x86!\xc9\x98o\xc9\xc4U\"" +
+	"1\xce!\xae0\xf0B\x1eQb\x88\x12\xccY\xb9p" +
+	"P\xab\\\xb1 K\xee%\x8f\x02\x84\xf0\x88hE\x8d" +
+	"\x88\x84\xcbi\xa8\x19\x0a\xaaA]\xcd(\x918\xcb!" +
+	".\xfe\xa6f\xd8qm\xd7s`\x12\x83I\xb8?\xe7" +
+	"_\xbaEKhj\x9c\xf2\xed\x12w\xa4V\x94h\xc6" +
+	"\xc6\xd6\x01\xbd\xce!f\x82\xb1\x91\xda\xa2)\x0eQ\x0c" +
+	"\xc6\xa6\xa0\xd1<\x87(\x07c3\xa7\xd1\x19\x0e\xe1\xfe" +
+	"1\xe2\xf5\x8c4>.u\xb4\x96\xa6\x16\xd4\xf1\xb2\xad" +
+	"h\xb8\xcd\x19\xcf\x9d\x18\xf6=\xf8\x9b]<Y\xdf\xc5" +
+	"SM\xa1\x87\xf2\xd5U\xb5\x8b\x9e\xacma\x8c\xf0+" +
+	"\x00\x00\xff\xff\xa0\xecBp"
 
 func RegisterSchema(reg *schemas.Registry) {
 	reg.Register(&schemas.Schema{
