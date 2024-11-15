@@ -1,6 +1,6 @@
 [package]
 name = "nkv_spec"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Pavel Abramov <uncle.decart@gmail.com>"]
 edition = "2021"
 description = "Cap'n Proto generated files for nkv"

@@ -50,3 +50,16 @@ struct ServerResponse {
     }
 }
 
+struct Notification {
+    union {
+        hello @0 :Void;
+        update :group {
+            key @1 :Text;
+            value @2 :Data;
+        }
+        close :group {
+            key @3 :Text;
+        }
+        notfound @4 :Void;
+    }
+}

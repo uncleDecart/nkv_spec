@@ -956,54 +956,278 @@ func (p ServerResponse_Future) Sub() DataResp_Future {
 	return DataResp_Future{Future: p.Future.Field(0, nil)}
 }
 
-const schema_ad055e760f5b08be = "x\xda\x8cT\xcfO\x13]\x14\xbd\xe7\xbd)\xc3\x97\xb4" +
-	"_\xdbo\xca\x86\x0d\xf9\x88&H\x82\xa0\xb8\x91\x0dH" +
-	"h\xa2\x09\xc4>\xd4h\xfc\xc9\xb4}\x81\x86Rkg" +
-	"\xa6H\"\xf1G4B\"\x09&\xbasc\xe2F\x13" +
-	"\xe2?`X\xb9e\xa9;te\x88\xfc\x03& <" +
-	"\xf3:\xa5\x1d\xe9\x98\xb8in\xce=}\xf7\xbc\xf3\xce" +
-	"\x9d\x81u\x8c\x18'b\xf3\x9c\x98\xe8\x89\xb4\xa9\xbej" +
-	"\xd6\xbd\xbc\xb9\xb2A\xc9\x14\xd4z\xfb\xb5x\xf5fd" +
-	"\x8d\"\xcc$\xb2^c\xdbZ\x83\xae\xdeb\x9e\xa0\x06" +
-	"\xda\x96\xe4\xe7\x7f\x96?\x91H!@N\xc3\x8c\x10\x0d" +
-	"v\xb0\xff`\x1d\xd5\x7f\x1c\xfc\x9fu\x81\xa0\xe4\x9b\x8e" +
-	"\xf3O7v\xbe\x1c:\x9bk\xcai\xce`\xa5ui" +
-	"\x9d\xe1\xef\x09\xea\xe3\xa3\xd5\xea\xbb\xdd\x0f[\x87\x0e\xf7" +
-	"\x95l\xf2m\xeb{\x8d\xfc\xadF\xee\xf7\x16\xd2S_" +
-	"{w[\x95\x18D\x83\x8bF'\xac\x15C\xd3\x97\x8d" +
-	"-\xc2\x8f\x97\xdd\x95\\ao?\xe4\x8a7\";V" +
-	"!\xa2+\x19\x99\xa7>U\x9a\xad\xder\xca2\xc7\xfa" +
-	"\xf5\xef\xf1\x9c].\x95\x87\xc6l\xd7\x8eOJ\xa7\x9c" +
-	"\x01D;7\x88\x0c\x10%\x8f\xf5\x12\x89#\x1cb\x80" +
-	"!\x09\xa4\xa0\xc1>\x0d\xf6p\x881\x86x\xd6v$" +
-	"\x12\xcd\xab\x11\x90 \xc4\xf3\xb6k\xe3_B\x86\x031" +
-	"b\xbal\x0c\xe6\xc1\xc1\x17d\xa5*+\x93\xf2\x8e'" +
-	"\x1d\xb8zz\x8a\x1bQ\xa5j\xe3\x17\xbb\x89\xc4]\x0e" +
-	"\xf1\x98!\x86}\xe5\xcf\x7f\xa8\xd1{\x1cb\x89!\xc6" +
-	"\xf6T\x0a\x8c(\xf9d\x88H<\xe0\x10\xcf\x18b\xfc" +
-	"\xa7J\x81\x13%\x97'\x89\xc4\x12\x87x\xc1\x103v" +
-	"U\x0a\x06Q\xf2y\x96H\xacr\x88W\x0cf\xd9s" +
-	"\x918\xf0\xcf\x97oNK\x17\x89\xe6\xe3\xfa\xe8p^" +
-	"\x16\xa5+[\x1b\xca\xf1\xb2N\xaeR\xc8\x12\xc2\xba^" +
-	"\xc9\xef\x93Y\xc8\x86\xf5C}\x19\xb5\x1d9!\x1d\xc7" +
-	"\x9e\x96\xa4]\x896\xde$\xddI$F8\xc4x\xe0" +
-	"M\xceiO\xc68D\x86!\xc9\x98o\xc9\xc4U\"" +
-	"1\xce!\xae0\xf0B\x1eQb\x88\x12\xccY\xb9p" +
-	"P\xab\\\xb1 K\xee%\x8f\x02\x84\xf0\x88hE\x8d" +
-	"\x88\x84\xcbi\xa8\x19\x0a\xaaA]\xcd(\x918\xcb!" +
-	".\xfe\xa6f\xd8qm\xd7s`\x12\x83I\xb8?\xe7" +
-	"_\xbaEKhj\x9c\xf2\xed\x12w\xa4V\x94h\xc6" +
-	"\xc6\xd6\x01\xbd\xce!f\x82\xb1\x91\xda\xa2)\x0eQ\x0c" +
-	"\xc6\xa6\xa0\xd1<\x87(\x07c3\xa7\xd1\x19\x0e\xe1\xfe" +
-	"1\xe2\xf5\x8c4>.u\xb4\x96\xa6\x16\xd4\xf1\xb2\xad" +
-	"h\xb8\xcd\x19\xcf\x9d\x18\xf6=\xf8\x9b]<Y\xdf\xc5" +
-	"SM\xa1\x87\xf2\xd5U\xb5\x8b\x9e\xacma\x8c\xf0+" +
-	"\x00\x00\xff\xff\xa0\xecBp"
+type Notification capnp.Struct
+type Notification_update Notification
+type Notification_close Notification
+type Notification_Which uint16
+
+const (
+	Notification_Which_hello    Notification_Which = 0
+	Notification_Which_update   Notification_Which = 1
+	Notification_Which_close    Notification_Which = 2
+	Notification_Which_notfound Notification_Which = 3
+)
+
+func (w Notification_Which) String() string {
+	const s = "helloupdateclosenotfound"
+	switch w {
+	case Notification_Which_hello:
+		return s[0:5]
+	case Notification_Which_update:
+		return s[5:11]
+	case Notification_Which_close:
+		return s[11:16]
+	case Notification_Which_notfound:
+		return s[16:24]
+
+	}
+	return "Notification_Which(" + strconv.FormatUint(uint64(w), 10) + ")"
+}
+
+// Notification_TypeID is the unique identifier for the type Notification.
+const Notification_TypeID = 0x81ce6034fef90d8b
+
+func NewNotification(s *capnp.Segment) (Notification, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return Notification(st), err
+}
+
+func NewRootNotification(s *capnp.Segment) (Notification, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return Notification(st), err
+}
+
+func ReadRootNotification(msg *capnp.Message) (Notification, error) {
+	root, err := msg.Root()
+	return Notification(root.Struct()), err
+}
+
+func (s Notification) String() string {
+	str, _ := text.Marshal(0x81ce6034fef90d8b, capnp.Struct(s))
+	return str
+}
+
+func (s Notification) EncodeAsPtr(seg *capnp.Segment) capnp.Ptr {
+	return capnp.Struct(s).EncodeAsPtr(seg)
+}
+
+func (Notification) DecodeFromPtr(p capnp.Ptr) Notification {
+	return Notification(capnp.Struct{}.DecodeFromPtr(p))
+}
+
+func (s Notification) ToPtr() capnp.Ptr {
+	return capnp.Struct(s).ToPtr()
+}
+
+func (s Notification) Which() Notification_Which {
+	return Notification_Which(capnp.Struct(s).Uint16(0))
+}
+func (s Notification) IsValid() bool {
+	return capnp.Struct(s).IsValid()
+}
+
+func (s Notification) Message() *capnp.Message {
+	return capnp.Struct(s).Message()
+}
+
+func (s Notification) Segment() *capnp.Segment {
+	return capnp.Struct(s).Segment()
+}
+func (s Notification) SetHello() {
+	capnp.Struct(s).SetUint16(0, 0)
+
+}
+
+func (s Notification) Update() Notification_update { return Notification_update(s) }
+
+func (s Notification) SetUpdate() {
+	capnp.Struct(s).SetUint16(0, 1)
+}
+
+func (s Notification_update) IsValid() bool {
+	return capnp.Struct(s).IsValid()
+}
+
+func (s Notification_update) Message() *capnp.Message {
+	return capnp.Struct(s).Message()
+}
+
+func (s Notification_update) Segment() *capnp.Segment {
+	return capnp.Struct(s).Segment()
+}
+func (s Notification_update) Key() (string, error) {
+	p, err := capnp.Struct(s).Ptr(0)
+	return p.Text(), err
+}
+
+func (s Notification_update) HasKey() bool {
+	return capnp.Struct(s).HasPtr(0)
+}
+
+func (s Notification_update) KeyBytes() ([]byte, error) {
+	p, err := capnp.Struct(s).Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s Notification_update) SetKey(v string) error {
+	return capnp.Struct(s).SetText(0, v)
+}
+
+func (s Notification_update) Value() ([]byte, error) {
+	p, err := capnp.Struct(s).Ptr(1)
+	return []byte(p.Data()), err
+}
+
+func (s Notification_update) HasValue() bool {
+	return capnp.Struct(s).HasPtr(1)
+}
+
+func (s Notification_update) SetValue(v []byte) error {
+	return capnp.Struct(s).SetData(1, v)
+}
+
+func (s Notification) Close() Notification_close { return Notification_close(s) }
+
+func (s Notification) SetClose() {
+	capnp.Struct(s).SetUint16(0, 2)
+}
+
+func (s Notification_close) IsValid() bool {
+	return capnp.Struct(s).IsValid()
+}
+
+func (s Notification_close) Message() *capnp.Message {
+	return capnp.Struct(s).Message()
+}
+
+func (s Notification_close) Segment() *capnp.Segment {
+	return capnp.Struct(s).Segment()
+}
+func (s Notification_close) Key() (string, error) {
+	p, err := capnp.Struct(s).Ptr(0)
+	return p.Text(), err
+}
+
+func (s Notification_close) HasKey() bool {
+	return capnp.Struct(s).HasPtr(0)
+}
+
+func (s Notification_close) KeyBytes() ([]byte, error) {
+	p, err := capnp.Struct(s).Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s Notification_close) SetKey(v string) error {
+	return capnp.Struct(s).SetText(0, v)
+}
+
+func (s Notification) SetNotfound() {
+	capnp.Struct(s).SetUint16(0, 3)
+
+}
+
+// Notification_List is a list of Notification.
+type Notification_List = capnp.StructList[Notification]
+
+// NewNotification creates a new list of Notification.
+func NewNotification_List(s *capnp.Segment, sz int32) (Notification_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2}, sz)
+	return capnp.StructList[Notification](l), err
+}
+
+// Notification_Future is a wrapper for a Notification promised by a client call.
+type Notification_Future struct{ *capnp.Future }
+
+func (f Notification_Future) Struct() (Notification, error) {
+	p, err := f.Future.Ptr()
+	return Notification(p.Struct()), err
+}
+func (p Notification_Future) Update() Notification_update_Future {
+	return Notification_update_Future{p.Future}
+}
+
+// Notification_update_Future is a wrapper for a Notification_update promised by a client call.
+type Notification_update_Future struct{ *capnp.Future }
+
+func (f Notification_update_Future) Struct() (Notification_update, error) {
+	p, err := f.Future.Ptr()
+	return Notification_update(p.Struct()), err
+}
+func (p Notification_Future) Close() Notification_close_Future {
+	return Notification_close_Future{p.Future}
+}
+
+// Notification_close_Future is a wrapper for a Notification_close promised by a client call.
+type Notification_close_Future struct{ *capnp.Future }
+
+func (f Notification_close_Future) Struct() (Notification_close, error) {
+	p, err := f.Future.Ptr()
+	return Notification_close(p.Struct()), err
+}
+
+const schema_ad055e760f5b08be = "x\xda\x84\x94_h\x1cU\x14\xc6\xcfw\xef\xecN\xb4" +
+	"\x99f\x87\xd9\x82\xfa\xb2X,\xb8\x91\xad\xb1\xc6\x97}" +
+	"\xd9P\x12P\xe9jNlQT$\xb3\xbb\xb7\xc9\xe0" +
+	"vw\xcc\xccl-\xb4\xd4\x88\xc5\x14\x15*\xe8\x9bO" +
+	"\xc5\x17\x85*\xf8(\xea\x83(X!>\x88\xfaV\xc5" +
+	"\x07\x09\xf8(\x88\xb41\x19\xb9;\x9b\xcd\xec\x9f\xe0\xdb" +
+	"\xe5\xdcs\xcf\xf9\xdd\xf3}\xf7\xce\xcc\x8b9\xe3\x11\xeb" +
+	"\xb2A\x82g3\xd9\xf8-\xeb\xf6\xee\xec\xf2\x0f\xeb\xc4" +
+	"\x87\x80\xf8\xab\x89\x17\xa6:/en\xd0\x820\x0d\"" +
+	"\xe7\x98\xf8\xda)\x09\x93\xc8)\x8a-B\\[\xf1N" +
+	"\xfft\xf1\xee\x8f\x88\xef\x01\xf6\xcf\x1e\x11&\x88\x9c\x9b" +
+	"\xe2\x0e\xc1\xd9\x14\xe7\x09\xf1\xc4\x8d\xe2C\xdf\xe5\xfe\xfc" +
+	"d|fQ\xfeEpJ\xb2B\x88K\x9dZ\xf8\xec" +
+	"\xadw6\xc9>\x94\x02\xc8t\xbbV\xe5u\xe7\x8c\xd4" +
+	"+\x96\xba\xeaLvC\xfdr\xd7\xd5\x9f\x87iaf" +
+	"\x88\x9c/\xe5\xf7\xceM\x9d\xfd\xe8\xb7\xb2\x00B\xac>" +
+	"<\xf2\xf4\x9b\x9bw~\x1d*\xdd-x\xcb\xf8\xdc\xf9" +
+	"\xc3\xd0\xab\xdf\x8dO\x09\xf17\xaf_\xeb|\xbc\xfd\xc5" +
+	"\xd6P\xe9\x84\xe3R\xe6\xbas%\xa3W\xeb\x19\x9d\xfc" +
+	"ptaa\xf9\xb7\xe9\xedQ\x0e=\xb5{\xb3?:" +
+	"\xc7\xb2:\xfb\xfe\xec\x16\xe1\x9f\xf7\x8f\xae\xd5\xbd\x9d\xdd" +
+	"1\xf7\xfb;\xfb\x99\xb3\xd3\xcd\xbc\x9d=O\xa58\xf0" +
+	"U\xfdx\xdd\xf5E\xcb/?\xd5\x0e\xbd\xb3^\xdd\x0d" +
+	"\xbdv\x8b\x16\x01\xceIc2\x8e\x0d\x10\xd9\xee\x09\"" +
+	"~Q\x82W\x05,\xec\xc6HIc\xab2\x09K\xec" +
+	"\xe8`_\x05\xbbz\x82\x84%\xff\x8d\xf30\x88\xec\xc7" +
+	"\x9e$\xe2Y\x09\x9e\x13(\xac\xaaf\xb3M\xd9J\xe4" +
+	"7\xdcP\x15\xea\xcdv\xa0\xe2V;<\xdb\x8eZ\x0d" +
+	"\"\xf3@\xaa\xe3\xbd#<!\x0d\xa2<4Y\xf1(" +
+	"\x11? \xc13\x026\x90\x87 \xb2K\x1a\xf7A\x09" +
+	"\x9e\x150_V\x170I\x02\x93\x84B\xc7mF\x0a" +
+	"\x16\x09X\x84\x83\xfb$Ll$m$\x91m\xe96" +
+	"\x13\x12\x9c\x1f\xac\xd8\xaf\x81\x96_\x9ewCw\xc9T" +
+	"\x81\xaf\xa7\xd7e\xec\x0e\xaf8=\x84\xa8\x83\xa5\xe9\x1e" +
+	"\xe2\xbc\xc0T\xcd\x0d\x14r\xfb\x96  G\x98j\xb8" +
+	"\xa1\x8b\xc3\x84E\x89.\xf3\xe1!\xe6g\xd4ZG\xad" +
+	"-\xa9W\"\x15\x84\xd4\xd5,\xbf\xaf\xd9%\x8d\xfc\xaa" +
+	"\x04\xbf\x91h\x96\xf4]\xd7\xd1\x8b\x12\xbc!\xa0EK" +
+	"\x06v\xa5L\xc4\xafI\xf0\xdb\x02\x89j\xfa\xd2W\x97" +
+	"\x88xC\x82\xdf\x13\xb0\x8c\xed\x9e\x96\xef\xd6\x88\xf8\x9a" +
+	"\x04\x7f `\xfaQ\x88\xdc\x9e\xe1\x12lsE\x85\xc8" +
+	"\xed\xbf\x85$Zi\xa8\xa6\x0a\xd5\xe8F\x1cD\xb5\xa0" +
+	"\xbe\xe6\xd5\x08\xe3v\xa3V\xb2O\xa6W\x1b{:5" +
+	"\xff\x93n\xa0\xaa\x15\x15\x04\xee\x8a\xd2\xc3\x98\xecK\xb0" +
+	"p\x1f\x11\xcfI\xf0\xa9\x94\x04O\xe8Q\xccK\xf0\xa2" +
+	"\x80-D2\x89\xea\xf3D|J\x82\x9f\x13\x90^c" +
+	"O\xe7\x01\xcd\xebMO\xb5\xc23\x11\xa5\x12F@\xfa" +
+	"F\x18O\xd1\x87(\xa7!z\xfe\xad\x9e$\xe2\xc7%" +
+	"\xf8\xf4\x00D%\x08\xdd0\x0a`\x92\x80I\xb8|." +
+	"\xb9\xea\x08B\xda\x1b\x81\xdfn\x05P\xc3\xefyz\xf0" +
+	"=',J\x0fdY\x82\x9biox:\xda\x90`" +
+	"?\xed\x8ds:\xba*\xc1\xe1\x81\xfe\xed\x19\xa1\xff\xdf" +
+	"\xf6\xa2]\xcb\x8cD\x83\xa86\x1a\x1d\x18\xeab\x14V" +
+	"U\xa1/\xee\xff\xbd\xaf\xd4\x17\xb0\xc77\xe4\x9d\xc1\xdf" +
+	"\xe0\xbf\x00\x00\x00\xff\xff}\\\xa6H"
 
 func RegisterSchema(reg *schemas.Registry) {
 	reg.Register(&schemas.Schema{
 		String: schema_ad055e760f5b08be,
 		Nodes: []uint64{
+			0x81ce6034fef90d8b,
+			0xa90a7cd454696762,
+			0xaeea10c82b29ad08,
 			0xcd8ddd577462762d,
 			0xd58909d665880630,
 			0xdefacd874f15a465,
